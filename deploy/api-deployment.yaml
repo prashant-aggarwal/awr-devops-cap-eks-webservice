@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-api
+  labels:
+    app: events-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-api
+      ver: v1.0
+  template:
+    metadata:
+      labels:
+        app: events-api
+        ver: v1.0
+    spec:
+      containers:
+        - name: events-api
+          image: 021668988309.dkr.ecr.us-east-1.amazonaws.com/events-api:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DBHOST
+              value: "prashant-mariadb-server.default"
+            - name: DBUSER
+              value: "root"
+            - name: DBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prashant-mariadb-server
+                  key: mariadb-root-password
+            - name: DBDATABASE
+              value: "events_db"
