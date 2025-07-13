@@ -18,18 +18,18 @@ spec:
     spec:
       containers:
         - name: events-api
-          image: 021668988309.dkr.ecr.us-east-1.amazonaws.com/events-api:latest
+          image: ${IMAGE_NAME}:${IMAGE_TAG}
           ports:
             - containerPort: 8082
-          env:
-            - name: DBHOST
-              value: "prashant-mariadb-server.default"
-            - name: DBUSER
-              value: "root"
-            - name: DBPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: prashant-mariadb-server
-                  key: mariadb-root-password
-            - name: DBDATABASE
-              value: "events_db"
+          # env:
+          #   - name: DBHOST
+          #     value: "prashant-mariadb-server.default"
+          #   - name: DBUSER
+          #     value: "root"
+          #   - name: DBPASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: prashant-mariadb-server
+          #         key: mariadb-root-password
+          #   - name: DBDATABASE
+          #     value: "events_db"
