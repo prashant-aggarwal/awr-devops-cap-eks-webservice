@@ -21,15 +21,15 @@ spec:
           image: ${IMAGE_NAME}:${IMAGE_TAG}
           ports:
             - containerPort: 8082
-          # env:
-          #   - name: DBHOST
-          #     value: "prashant-mariadb-server.default"
-          #   - name: DBUSER
-          #     value: "root"
-          #   - name: DBPASSWORD
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: prashant-mariadb-server
-          #         key: mariadb-root-password
-          #   - name: DBDATABASE
-          #     value: "events_db"
+          env:
+            - name: DBHOST
+              value: "prashant-mariadb-server.default"
+            - name: DBUSER
+              value: "root"
+            - name: DBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prashant-mariadb-server
+                  key: mariadb-root-password
+            - name: DBDATABASE
+              value: "events_db"

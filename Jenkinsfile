@@ -66,10 +66,10 @@ pipeline {
 							echo "Building Docker image..."
 							docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
 
-							echo "🏷️ Tagging image for ECR..."
+							echo "Tagging image for ECR..."
 							docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_REPO}:${IMAGE_TAG}
 
-							echo "📤 Pushing image to ECR..."
+							echo "Pushing image to ECR..."
 							docker push ${IMAGE_REPO}:${IMAGE_TAG}
 						'''
 					}
@@ -77,8 +77,8 @@ pipeline {
 			}
 		}
 
-		// Stage 4 - Deploy web application on EKS Cluster
-        stage('Deploy Web Application') {
+		// Stage 4 - Deploy web service on EKS Cluster
+        stage('Deploy Web Service') {
             steps {
 				script {
 				// Install AWS Steps plugin to make this work
@@ -86,7 +86,6 @@ pipeline {
 						try {
 							sh '''
 								cd deploy
-								# Use envsubst to replace placeholders
 								sed "s|\\${IMAGE_NAME}|${IMAGE_REPO}|g" ${WEB_DEPLOY}.yaml | \
   								sed "s|\\${IMAGE_TAG}|${IMAGE_TAG}|g" > ${WEB_DEPLOY}-rendered.yaml
 								aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION} --role-arn ${ROLE_ARN}
@@ -96,8 +95,8 @@ pipeline {
 								kubectl get pods
 							'''
 						} catch (exception) {
-							echo "❌ Failed to deploy web application on EKS cluster: ${exception}"
-							error("Halting pipeline due to web application deployment failure.")
+							echo "❌ Failed to deploy web service on EKS cluster: ${exception}"
+							error("Halting pipeline due to web service deployment failure.")
 						}
 					}
                 }
