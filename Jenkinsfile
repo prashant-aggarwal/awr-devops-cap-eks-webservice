@@ -8,18 +8,6 @@ pipeline {
 
 	// Multistage pipeline
     stages {
-		// Stage 1 - Build and Push Docker Image to DockerHub
-		// stage('Build and Push to DockerHub') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://index.docker.io/v1/', 'DockerHub') {
-        //                 def customImage = docker.build("${IMAGE_REPO}:${IMAGE_TAG}")
-        //                 customImage.push()
-        //             }
-        //         }
-        //     }
-        // }
-
 		// Stage 1 - Install AWS CLI
         stage('Install AWS CLI') {
 			steps {
@@ -47,7 +35,7 @@ pipeline {
 						mkdir -p $HOME/bin
 						cp ./kubectl $HOME/bin/kubectl
 					else
-						echo "kubectl is already installed: $(kubectl version --client --short)"
+						echo "kubectl is already installed: $(kubectl version --client)"
 					fi
                 '''
             }
