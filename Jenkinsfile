@@ -96,6 +96,25 @@ pipeline {
   								sed "s|\\${IMAGE_TAG}|${IMAGE_TAG}|g" > ${API_DEPLOY}-rendered.yaml
 								aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION} --role-arn ${ROLE_ARN}
 								kubectl apply -f api-service.yaml
+								
+								echo "Waiting for EXTERNAL-IP of 'events-api-svc'..."
+
+								for i in $(seq 1 60); do
+									HOSTNAME=$(kubectl get svc events-api-svc -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" 2>/dev/null)
+									if [ -n "$HOSTNAME" ]; then
+										EXTERNAL_IP="$HOSTNAME"
+										echo "EXTERNAL-IP is available (hostname): $EXTERNAL_IP"
+										break
+									fi
+									echo "Still waiting... ($i/60)"
+									sleep 10
+								done
+
+								if [ -z "$EXTERNAL_IP" ]; then
+									echo "Timed out waiting for EXTERNAL-IP. Exiting with error."
+									exit 1
+								fi
+
 								kubectl apply -f ${API_DEPLOY}-rendered.yaml
 								kubectl get svc
 								kubectl get pods
