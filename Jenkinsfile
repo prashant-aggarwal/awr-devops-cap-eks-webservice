@@ -101,8 +101,7 @@ pipeline {
 								kubectl get pods
 							'''
 						} catch (exception) {
-							echo "❌ Failed to deploy web service on EKS cluster: ${exception}"
-							error("Halting pipeline due to web service deployment failure.")
+							error("Deployment failed: ${e}")
 						}
 					}
                 }
@@ -114,6 +113,12 @@ pipeline {
 	post {
         always {
             cleanWs()
+        }
+		success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
