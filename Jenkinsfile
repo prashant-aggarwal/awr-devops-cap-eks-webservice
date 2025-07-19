@@ -118,6 +118,9 @@ pipeline {
 								kubectl apply -f ${API_DEPLOY}-rendered.yaml
 								kubectl get svc
 								kubectl get pods
+
+								kubectl apply -f api-hpa.yaml
+								kubectl get hpa
 							'''
 						} catch (exception) {
 							error("Deployment failed: ${e}")
