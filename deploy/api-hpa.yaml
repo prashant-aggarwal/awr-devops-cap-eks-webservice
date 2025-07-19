@@ -3,8 +3,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: events-api-hpa
 spec:
-  minReplicas: 2
-  maxReplicas: 4
+  minReplicas: 3
+  maxReplicas: 6
   metrics:
   - resource:
       name: cpu
