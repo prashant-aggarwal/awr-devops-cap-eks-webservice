@@ -123,7 +123,7 @@ pipeline {
 								kubectl get hpa
 							'''
 						} catch (exception) {
-							error("Deployment failed: ${e}")
+							error("Deployment failed: ${exception}")
 						}
 					}
                 }
