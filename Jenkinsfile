@@ -4,10 +4,28 @@ pipeline {
 	// Set the environment variables
     environment {
         PATH = "${env.HOME}/bin:${env.PATH}"
-    }
+		IMAGE_REPO = "${env.IMAGE_REGISTRY}/${env.IMAGE_NAME_API}"
+	}
 
 	// Multistage pipeline
     stages {
+		// Stage 0 - Display environment variables
+		stage('Display environment variables') {
+            steps {
+                script {
+                    echo "Using config:"
+                    echo "  AWS_REGION:   ${env.AWS_REGION}"
+                    echo "  CLUSTER_NAME: ${env.CLUSTER_NAME}"
+                    echo "  ROLE_ARN:     ${env.ROLE_ARN}"
+                    echo "  IMAGE_NAME_API:   ${env.IMAGE_NAME_API}"
+                    echo "  IMAGE_TAG:    ${env.IMAGE_TAG}"
+                    echo "  IMAGE_REGISTRY: ${env.IMAGE_REGISTRY}"
+                    echo "  IMAGE_REPO:   ${env.IMAGE_REPO}"
+                    echo "  API_DEPLOY:   ${env.API_DEPLOY}"
+                }
+            }
+        }
+
 		// Stage 1 - Install AWS CLI
         stage('Install AWS CLI') {
 			steps {
@@ -74,11 +92,11 @@ pipeline {
 						try {
 							sh '''
 								cd deploy
-								sed "s|\\${IMAGE_NAME}|${IMAGE_REPO}|g" ${WEB_DEPLOY}.yaml | \
-  								sed "s|\\${IMAGE_TAG}|${IMAGE_TAG}|g" > ${WEB_DEPLOY}-rendered.yaml
+								sed "s|\\${IMAGE_NAME}|${IMAGE_REPO}|g" ${API_DEPLOY}.yaml | \
+  								sed "s|\\${IMAGE_TAG}|${IMAGE_TAG}|g" > ${API_DEPLOY}-rendered.yaml
 								aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION} --role-arn ${ROLE_ARN}
 								kubectl apply -f api-service.yaml
-								kubectl apply -f ${WEB_DEPLOY}-rendered.yaml
+								kubectl apply -f ${API_DEPLOY}-rendered.yaml
 								kubectl get svc
 								kubectl get pods
 							'''
